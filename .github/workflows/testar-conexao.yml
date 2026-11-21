@@ -1,0 +1,33 @@
+name: Testar conexão com o Instagram
+
+# Só lê o perfil. Não publica nada. Rode na instalação e sempre que trocar o token.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ler perfil e limite de publicação
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          V: ${{ vars.IG_API_VERSION || 'v23.0' }}
+        run: |
+          falha() { echo "$1"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; exit 1; }
+          [ -n "$IG_ACCESS_TOKEN" ] || falha "Falta o secret IG_ACCESS_TOKEN."
+          me=$(curl -s "https://graph.instagram.com/$V/me?fields=user_id,username,account_type&access_token=$IG_ACCESS_TOKEN")
+          usuario=$(echo "$me" | jq -r '.username // empty')
+          [ -n "$usuario" ] || falha "Token inválido. A Meta respondeu: $(echo "$me" | jq -r '.error.message // "sem mensagem"')"
+          uid=$(echo "$me" | jq -r '.user_id')
+          echo "Conta: @$usuario ($(echo "$me" | jq -r '.account_type'))"
+          # O id da conta não é segredo. Separado por espaços para o GitHub não mascarar no log.
+          uid_legivel=$(echo "$uid" | sed 's/./& /g')
+          [ -n "$IG_USER_ID" ] || falha "Falta o secret IG_USER_ID. O valor certo, sem os espaços, é: $uid_legivel"
+          [ "$uid" = "$IG_USER_ID" ] || falha "O secret IG_USER_ID não bate com o token. O valor certo, sem os espaços, é: $uid_legivel"
+          limite=$(curl -s "https://graph.instagram.com/$V/$IG_USER_ID/content_publishing_limit?fields=quota_usage,config&access_token=$IG_ACCESS_TOKEN")
+          echo "$limite" | jq .
+          echo "$limite" | jq -e '.data' >/dev/null || falha "O token lê o perfil mas não tem a permissão de publicar (instagram_business_content_publish). Gere o token de novo com ela."
+          echo "Conexão OK"
+          echo "Conexão OK: @$usuario" >> "$GITHUB_STEP_SUMMARY"

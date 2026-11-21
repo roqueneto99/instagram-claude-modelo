@@ -1,0 +1,44 @@
+name: Renovar token do Instagram
+
+# O token de longa duração vale 60 dias. Esta Action renova no dia 1 de cada mês
+# e grava o token novo no secret IG_ACCESS_TOKEN.
+# Precisa do secret GH_PAT: token fine-grained só deste repositório,
+# com a permissão "Secrets: Read and write".
+
+on:
+  schedule:
+    - cron: "17 11 1 * *"
+  workflow_dispatch:
+
+jobs:
+  renovar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Renovar e salvar
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "$IG_ACCESS_TOKEN" ]; then
+            echo "Instalação ainda não foi feita (sem IG_ACCESS_TOKEN). Nada a renovar."
+            exit 0
+          fi
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Falta o secret GH_PAT. Sem ele o token novo não pode ser gravado."
+            exit 1
+          fi
+          resposta=$(curl -s "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${IG_ACCESS_TOKEN}")
+          novo=$(echo "$resposta" | jq -r '.access_token // empty')
+          if [ -z "$novo" ]; then
+            echo "A Meta recusou a renovação: $(echo "$resposta" | jq -r '.error.message // "sem mensagem"')"
+            echo "Se o token foi gerado há menos de 24 horas, tente de novo amanhã."
+            echo "Se o token já venceu, gere outro no painel da Meta e atualize o secret IG_ACCESS_TOKEN."
+            exit 1
+          fi
+          echo "::add-mask::$novo"
+          if ! gh secret set IG_ACCESS_TOKEN --repo "${{ github.repository }}" --body "$novo"; then
+            echo "O GH_PAT não conseguiu gravar o secret. Ele venceu ou está sem a permissão Secrets: Read and write."
+            exit 1
+          fi
+          echo "Token renovado"
+          echo "Token renovado" >> "$GITHUB_STEP_SUMMARY"
