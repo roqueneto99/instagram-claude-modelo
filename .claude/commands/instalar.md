@@ -1,182 +1,155 @@
 ---
-description: Instala a publicação no Instagram, do zero, uma pergunta por vez
+description: Instala a publicação no Instagram do começo ao fim, parando só onde a pessoa é obrigatória
 ---
 
-Você vai guiar a instalação deste repositório para uma pessoa que usa o Claude no básico. Ela não é programadora. Siga este roteiro à risca.
+Você vai instalar este publicador de Instagram para uma pessoa que usa o Claude no básico e não é programadora. Ela colou uma mensagem única e espera que você faça quase tudo. Siga este roteiro à risca.
+
+MODELO é o endereço do repositório modelo que veio na mensagem da pessoa. DONO e REPO são a conta dela e o nome da cópia que você vai criar.
 
 ## Como conduzir
 
-- **Uma pergunta por vez.** Faça a pergunta, pare e espere a resposta. Nunca mande dois pedidos na mesma mensagem.
-- **Confira antes de seguir.** Cada etapa tem um "Confere". Só avance quando o confere passar. Se você não tem como conferir sozinho, peça para a pessoa dizer o que está vendo na tela.
-- **Diga quem faz.** Antes de cada ação, diga "isso eu faço" ou "esse clique é só seu". Você não tem acesso ao Instagram, ao painel da Meta nem às senhas dela, e não deve pedir nenhuma senha.
-- **Token nunca passa pelo chat.** A pessoa copia o token do painel da Meta e cola direto no formulário do GitHub. Se ela colar um token no chat, diga para descartar aquele e gerar outro, e não grave o valor em lugar nenhum.
-- **Linguagem simples.** Sem sigla sem explicação. Mensagens curtas. Um link por vez, sempre o link direto.
-- **Tela diferente do roteiro.** Os painéis da Meta e do GitHub mudam de nome e de lugar. Se a pessoa não achar um botão, peça um print ou a descrição do que ela vê e oriente por ali. Não invente caminho.
-- **Guarde o progresso.** No início, crie ou leia `instalacao.md` na raiz, com a lista dos passos abaixo e o que já foi concluído. Atualize a cada etapa. Se o arquivo já existir, retome de onde parou e diga isso à pessoa.
-- **Nada de publicar.** A instalação não publica nenhum post. O teste final só lê o perfil.
+**Você faz, ela confirma.** Não pergunte o que você consegue descobrir ou fazer sozinho. Não peça permissão para cada passo. Não explique o que é GitHub, API ou token além de uma frase quando for inevitável.
 
-Comece com uma mensagem curta: o que vai acontecer (5 partes), quanto tempo leva (cerca de uma hora e meia, podendo parar e voltar) e a primeira pergunta do Passo 0.
+**Só existem cinco motivos para parar.** Fora deles, siga em frente:
+1. As três respostas do design e o "serve" do visual (Passo 1).
+2. Entrar em uma conta ou criar uma: GitHub, Facebook e Instagram.
+3. Confirmação de segurança: código do GitHub, senha pedida de novo, verificação em duas etapas, captcha, telefone.
+4. Autorizar o Claude a usar um site no Chrome, quando o Chrome pedir.
+5. Gerar e colar um token. São dois: o do Instagram e o `GH_PAT`.
 
-Descubra sozinho, sem perguntar: o dono e o nome do repositório (`git remote get-url origin`) e se o comando `gh` existe e está logado (`gh auth status`). Use DONO e REPO de verdade em todos os links abaixo.
+**Cada parada é uma frase só**, dizendo exatamente o que ela faz e como avisar que terminou. Exemplo: "Entre no seu Instagram na janela que abriu e me diga 'pronto'." Depois espere.
 
----
+**Dois modos.**
+- **Assistido (padrão):** se você tem as ferramentas do Claude no Chrome, abra as páginas, clique e preencha você mesmo no navegador dela. Ela só entra nas cinco paradas.
+- **Manual:** sem o Claude no Chrome, cada tela vira uma instrução curta com o link direto, uma por vez, e você confere pelo que ela descreve. Avise uma única vez, no começo: "Sem o Claude no Chrome eu te guio pelos cliques. Dá certo do mesmo jeito, só leva mais tempo."
 
-## Passo 0. Checagem
+**Token e senha: você nunca vê.**
+- Nunca peça token ou senha no chat. Se ela colar um, diga para descartar e gerar outro, e não repita nem grave o valor.
+- Nunca grave token em arquivo, comando, variável ou histórico.
+- No modo assistido, a partir da frase em que você pede para ela gerar o token, **não olhe o navegador**: nada de captura de tela, leitura de página ou de área de transferência, em nenhuma aba, até ela dizer "pronto". O token fica visível na tela nesse intervalo.
+- Para conferir, use só a lista de nomes dos secrets (`gh secret list`), que não mostra valores.
 
-Quatro perguntas, uma por vez. O que faltar, ensine a criar antes de continuar.
+**Nada de publicar.** A instalação não publica nenhum post. O teste final só lê o perfil.
 
-**0.1 GitHub e repositório próprio**
-- Pergunta: "Você criou este repositório pelo botão Use this template, na sua conta do GitHub, e marcou Public?"
-- Confere (isso você faz): o `origin` aponta para a conta da pessoa, o repositório é público (`gh repo view --json visibility,isTemplate`, ou `curl -s https://api.github.com/repos/DONO/REPO` respondendo `"private": false`) e não é o próprio modelo (`is_template` falso).
-- Se não tem conta: github.com/signup, depois voltar à página do modelo e clicar em Use this template > Create a new repository > Public.
-- Se o repositório está privado: Settings > General > Danger Zone > Change visibility > Public. Explique o motivo: o Instagram baixa as imagens de um endereço público.
+**Tela diferente do roteiro.** Os painéis mudam. No modo assistido, leia a tela e ache o equivalente. No manual, peça um print. Não invente caminho. Se travar duas vezes no mesmo ponto, diga à pessoa o que está acontecendo.
 
-**0.2 Instagram profissional**
-- Pergunta: "Seu Instagram está como conta profissional (Criador de conteúdo ou Empresa)?"
-- Só a pessoa consegue ver. No aplicativo: perfil > menu > Configurações e atividade > Tipo de conta e ferramentas.
-- Se for conta pessoal: nessa mesma tela, "Mudar para conta profissional". Qualquer uma das duas opções serve. Não precisa de Página do Facebook.
-- Confere: a pessoa confirma que aparece "Painel profissional" no perfil. Anote o handle (o @) para o Passo 1.
+**Progresso.** Mantenha `instalacao.md` na raiz da cópia: passos concluídos, modo usado, pendências e a validade do `GH_PAT`. Se o arquivo já existir, retome de onde parou e diga isso em uma linha.
 
-**0.3 Conta de desenvolvedor na Meta**
-- Pergunta: "Você já entrou alguma vez em developers.facebook.com e criou a conta de desenvolvedor?"
-- Se não: precisa de uma conta do Facebook. Entrar em https://developers.facebook.com, clicar em "Começar" e confirmar o cadastro (a Meta pede para verificar telefone ou e-mail). Esses cliques são só dela.
-- Confere: a pessoa abre https://developers.facebook.com/apps e vê a página "Apps" com o botão "Criar app".
-
-**0.4 Claude com acesso ao GitHub**
-- Isso você confere sozinho: `git push --dry-run origin HEAD:main` tem que passar.
-- Se falhar: ajude a pessoa a entrar no GitHub pelo terminal (`gh auth login`, escolhendo GitHub.com, HTTPS e login pelo navegador) ou pelo aplicativo que ela usa, e teste de novo.
-- Confira também as ferramentas locais: `python3 --version` e `python3 -c "import PIL"` (se faltar, `pip install pillow`).
-- Se você estiver rodando em uma sessão na nuvem que só consegue enviar para outro ramo (branch) e não para a `main`, avise: a publicação só dispara na `main`. O caminho mais simples é usar o Claude Code no computador da pessoa.
-
-Ao fim, mostre os quatro itens com "ok" e siga.
+Abra com uma mensagem de três linhas: o que vai acontecer, que ela só será chamada em poucos momentos e que o primeiro post de exemplo aparece em uns 10 minutos. Na mesma mensagem já faça a primeira pergunta do Passo 1, e rode o Passo 0 enquanto ela responde.
 
 ---
 
-## Passo 1. Design system
+## Passo 0. Preparar (sem perguntas)
 
-Objetivo: preencher a Parte 2 do `CLAUDE.md` e ter um post de exemplo com o visual aprovado.
+1. **Você consegue agir neste computador?** Precisa rodar comandos e gravar arquivos. Se não consegue, diga em uma frase: "Abra o Claude Code no seu computador e cole a mesma mensagem lá." e pare.
+2. **Modo.** Veja se as ferramentas do Claude no Chrome estão disponíveis e anote o modo.
+3. **GitHub pelo terminal.** `gh --version`. Se faltar, instale (`brew install gh` no Mac, `winget install --id GitHub.cli` no Windows). Depois `gh auth status`.
+   - Não está logado: rode `gh auth login --hostname github.com --git-protocol https --web`, mostre o código que aparecer e pare: "Na página do GitHub que abriu, digite o código XXXX-XXXX, autorize e me diga 'pronto'." Se ela não tem conta, a página oferece criar.
+   - Não deu para instalar o `gh`: siga sem ele. Onde o roteiro usa `gh`, faça pelo Chrome no modo assistido, ou peça à pessoa no manual.
+4. **Cópia pública.** `gh repo create meu-instagram --template MODELO --public --clone`, dentro da pasta Documentos dela. Se o nome já existe e é uma instalação anterior, baixe e retome. Se é outra coisa, use `meu-instagram-2`.
+   - Sem `gh`: abra `MODELO/generate` no Chrome, nome `meu-instagram`, marque Public, crie, e depois `git clone`.
+5. **Confira sozinho:** o repositório é da conta dela, é público e não é o próprio modelo (`gh repo view --json visibility,isTemplate,owner`); `git push --dry-run origin HEAD:main` passa; `python3 -c "import PIL"` funciona (se faltar, `pip install pillow`); existe um Chrome para renderizar a arte.
+6. Crie o `instalacao.md`.
 
-Entreviste, uma pergunta por vez. Quando a pessoa não souber responder, ofereça de duas a três opções prontas para ela escolher.
+Se o login do GitHub demorar, não segure a pessoa: faça o Passo 1 em uma pasta provisória e mova o resultado para a cópia quando ela existir.
 
-1. Handle do perfil (já anotado no 0.2, só confirme).
-2. Sobre o que é o perfil e para quem ela fala.
-3. Tom de voz. Ofereça três tons com uma frase de exemplo de cada, escritas para o assunto dela.
-4. Cores. Se ela tem marca, peça os códigos ou um print de um post de que gosta e tire as cores de lá. Se não tem, proponha três paletas (fundo, texto, destaque).
-5. Fontes. Proponha três pares do Google Fonts (título e texto) que combinem com o tom.
-6. Assinatura: o que aparece em toda arte (handle, site, logo). Se tiver logo, peça o arquivo e salve em `design/`.
-7. Formatos: como ela imagina o post único e o carrossel (quantas telas, como é a capa, como é a última tela).
-8. Legenda: tamanho de costume, hashtags fixas, chamada final.
-9. O que nunca escrever: palavras, promessas, assuntos, pontuação.
+---
+
+## Passo 1. Design em 10 minutos
+
+Três perguntas, uma por vez. São as únicas.
+
+1. "Qual é o @ do Instagram onde vamos publicar? Ele precisa estar como conta profissional (Criador de conteúdo ou Empresa). Se não souber se está, me diga que eu mostro onde ver."
+   - Se for conta pessoal: no aplicativo, Configurações e atividade > Tipo de conta e ferramentas > Mudar para conta profissional. Qualquer opção serve. Não precisa de Página do Facebook.
+2. "Em uma frase: sobre o que é o seu perfil e para quem você fala?"
+3. "Me mande o print de um post de que você gosta, seu ou de outra pessoa. Vou usar como referência de visual."
+   - Link do Instagram não serve, peça o print. Se ela não tiver nenhum, siga com o visual padrão da base.
+
+Daí em diante não pergunte mais nada. Decida você e marque como sugerido:
+- **Cores e peso visual:** tire da referência (fundo, texto, destaque). A referência orienta o estilo. Não copie logo, texto, foto ou arte de outra pessoa.
+- **Fontes:** um par do Google Fonts parecido com o da referência.
+- **Tom de voz:** deduza do assunto e do público.
+- O restante da Parte 2 do `CLAUDE.md` já vem com padrão.
 
 Depois:
-- Preencha a Parte 2 do `CLAUDE.md`. Não pode sobrar nenhum `PREENCHER` (onde não se aplica, escreva "não tem").
-- Gere um post de exemplo de 1080 x 1350 em `rascunhos/exemplo-visual/`, com um assunto real do perfil dela. Método sugerido: um arquivo HTML com as cores e fontes, renderizado em PNG por um navegador sem janela (Chrome, Chromium ou Playwright). Se não houver navegador disponível, desenhe com Pillow. Abra o PNG e confira você mesmo antes de mostrar: texto cortado, fonte errada e margem torta são os erros comuns.
-- Mostre o PNG e pergunte: "Esse é o visual? O que muda?" Ajuste até ela aprovar.
-- Quando aprovar, salve o arquivo que gerou a arte como base em `design/` (por exemplo `design/base-post.html`) e anote no `CLAUDE.md` o método e o comando de render que funcionaram. Faça também a base do carrossel (capa, tela do meio e última tela) e mostre.
+1. Preencha os campos `PREENCHER` da Parte 2 do `CLAUDE.md`.
+2. Ajuste as variáveis de cor e fonte no começo de `design/base-post.html`.
+3. Gere um post de exemplo com um assunto real do perfil dela, em `rascunhos/exemplo-visual/`, pelo comando de render do `CLAUDE.md`. Abra o PNG e confira antes de mostrar.
+4. Mostre o PNG com uma frase: "Esse visual serve para começar? Dá para mudar qualquer coisa depois." Se ela pedir ajuste, faça no máximo duas rodadas agora e deixe o resto para depois da instalação.
 
-Deixe claro para a pessoa: aprovar o visual não publica nada.
+O exemplo tem de aparecer em até 10 minutos depois da terceira resposta. Não faça base de carrossel agora: ela nasce no primeiro carrossel que a pessoa pedir.
 
-Confere: `grep -cE "(: |- )PREENCHER" CLAUDE.md` devolve 0, existe pelo menos um arquivo base em `design/` e a pessoa disse que aprova o visual. Faça commit do `CLAUDE.md` e da pasta `design/` (o exemplo em `rascunhos/` não vai para o GitHub).
+Confere: `grep -cE "(: |- )PREENCHER" CLAUDE.md` devolve 0 e ela disse que serve. Faça commit e push do `CLAUDE.md` e de `design/`. Aprovar o visual não publica nada.
 
 ---
 
 ## Passo 2. Meta
 
-Tudo neste passo são cliques da pessoa, no navegador dela. Você orienta e confere pelo que ela descreve. Avise isso no começo e diga que leva de 20 a 30 minutos.
+Objetivo: um app da Meta ligado ao Instagram dela e o token salvo no GitHub sem passar por você.
 
-**2.1 Criar o app**
-- https://developers.facebook.com/apps > "Criar app".
-- Nome: qualquer um, por exemplo "Publicador" mais o primeiro nome dela. Aviso importante: a Meta recusa nomes com "Instagram", "Insta", "IG", "Gram", "Facebook", "Face" ou "FB".
-- Caso de uso: "Gerenciar mensagens e conteúdo no Instagram". Se a tela pedir tipo de app, escolha "Empresa".
-- Se perguntar por portfólio empresarial, pode seguir sem conectar nenhum.
-- Confere: ela está no painel do app novo e vê o nome dele no topo.
+**O que você faz no modo assistido (no manual, vira instrução, um clique por vez):**
 
-**2.2 Ligar o Instagram com login do Instagram**
-- No menu do app: "Casos de uso" > "Personalizar" no caso do Instagram > "Configuração da API com login do Instagram". Em painéis antigos o caminho é "Adicionar produto" > Instagram > "API com login do Instagram".
-- Tem que ser a opção com login do **Instagram**. A opção com login do Facebook exige Página e não serve para este modelo.
-- Na lista de permissões, confira que aparecem `instagram_business_basic` e `instagram_business_content_publish`. Se a segunda não estiver, adicione.
-- Confere: ela vê a seção "Gerar tokens de acesso".
+1. Abra https://developers.facebook.com/apps.
+   - Parada, se não estiver logada ou sem cadastro de desenvolvedor: "Entre no Facebook e conclua o cadastro de desenvolvedor na página que abriu (a Meta pede para confirmar telefone ou e-mail). Me diga 'pronto'."
+2. "Criar app". Nome: "Publicador" mais o primeiro nome dela. A Meta recusa nomes com "Instagram", "Insta", "IG", "Gram", "Facebook", "Face" ou "FB". Caso de uso: "Gerenciar mensagens e conteúdo no Instagram". Se pedir tipo de app, "Empresa". Se perguntar por portfólio empresarial, siga sem conectar.
+   - Parada, se a Meta pedir a senha de novo: "Digite sua senha do Facebook na janela e me diga 'pronto'."
+3. No app: "Casos de uso" > "Personalizar" > "Configuração da API com login do Instagram". Em painéis antigos: "Adicionar produto" > Instagram > "API com login do Instagram". Tem que ser a opção com login do **Instagram**; a de login do Facebook exige Página e não serve.
+4. Confira que as permissões incluem `instagram_business_basic` e `instagram_business_content_publish`. Adicione a segunda se faltar.
+5. "Funções do app" > "Funções" > "Adicionar pessoas" > "Testador do Instagram" > o handle dela.
+6. Aceite o convite em https://www.instagram.com/accounts/manage_access/ > "Convites de testador" > "Aceitar".
+   - Parada, se o Instagram não estiver logado no Chrome: "Entre no seu Instagram nesta aba e me diga 'pronto'."
+7. De volta ao app, em "Gerar tokens de acesso": "Adicionar conta".
+   - Parada: "Na janela que abriu, entre no seu Instagram, clique em permitir e me diga 'pronto'."
+8. Em outra aba, abra https://github.com/DONO/REPO/settings/secrets/actions/new e preencha só o campo Name com `IG_ACCESS_TOKEN`.
+9. **Parada do token.** Diga exatamente: "Agora é com você: na aba da Meta, clique em 'Gerar token' e copie. Na aba do GitHub, cole no campo Secret e clique em 'Add secret'. Feche o aviso do token na Meta e me diga 'pronto'." A partir daqui não olhe o navegador até o "pronto".
+10. Confere: `gh secret list` mostra `IG_ACCESS_TOKEN`. Sem `gh`, abra https://github.com/DONO/REPO/settings/secrets/actions e veja o nome na lista.
 
-**2.3 Convidar a própria conta como testadora**
-- Menu do app: "Funções do app" > "Funções" > "Adicionar pessoas" > "Testador do Instagram" > digitar o handle dela > confirmar.
-- Confere: o handle aparece na lista como pendente.
-
-**2.4 Aceitar o convite**
-- Logada no Instagram com a mesma conta, abrir https://www.instagram.com/accounts/manage_access/ > aba "Convites de testador" > "Aceitar".
-- No aplicativo do celular o caminho é Configurações e atividade > Permissões de sites > Apps e sites > Convites de testador.
-- Confere: de volta ao painel da Meta, o handle deixa de aparecer como pendente.
-
-**2.5 Gerar o token**
-- Antes de ela clicar, avise: "O token é uma senha. Não cole aqui no chat. Deixe a aba aberta, você vai colar direto no GitHub no próximo passo."
-- Na seção "Gerar tokens de acesso": "Adicionar conta" > entrar com o Instagram dela > autorizar. Depois, "Gerar token" ao lado da conta > copiar.
-- Esse token vale 60 dias e o repositório renova sozinho todo mês.
-- O app fica em modo de desenvolvimento. Não precisa enviar para análise nem publicar o app: nesse modo ele funciona para a conta que tem função nele, que é a dela.
-- Confere: ela diz que copiou o token e não colou em lugar nenhum.
-
-Siga direto para o Passo 3, sem pausa, enquanto o token está copiado.
+O app fica em modo de desenvolvimento. Não envie para análise nem publique o app: nesse modo ele funciona para a conta que tem função nele, que é a dela. O token vale 60 dias e o repositório renova sozinho todo mês.
 
 ---
 
-## Passo 3. Secrets no GitHub
+## Passo 3. Os outros dois secrets
 
-"Secret" é um cofre do GitHub: depois de salvo, ninguém consegue ler, nem a própria pessoa. São três. O formulário é sempre o mesmo link, um secret por vez:
+**3.1 IG_USER_ID (você faz sozinho).** É o número da conta, não é segredo.
+- Rode o teste: `gh workflow run testar-conexao.yml`, depois `gh run watch` e `gh run view --log`. Ele falha de propósito e mostra "Falta o secret IG_USER_ID. O valor certo, sem os espaços, é: ...".
+- Tire os espaços e grave: `gh secret set IG_USER_ID --body NUMERO`.
+- Sem `gh`: rode o workflow pela página https://github.com/DONO/REPO/actions/workflows/testar-conexao.yml, leia o resumo da execução e preencha o formulário de secret com o número.
+- Se a falha for "Token inválido", o token foi colado pela metade: repita os itens 8 a 10 do Passo 2.
 
-https://github.com/DONO/REPO/settings/secrets/actions/new
-
-**3.1 IG_ACCESS_TOKEN**
-- Name: `IG_ACCESS_TOKEN`. Secret: colar o token do Passo 2.5. Clicar em "Add secret". Clique só dela.
-
-**3.2 GH_PAT**
-- Explique em uma frase: é uma chave do GitHub que deixa o repositório trocar o token do Instagram sozinho todo mês.
-- Criar em https://github.com/settings/personal-access-tokens/new (clique só dela):
-  - Token name: `renovar-instagram`.
-  - Expiration: a maior que a tela oferecer. Se houver "No expiration", pode usar.
-  - Repository access: "Only select repositories" > escolher só este repositório.
-  - Permissions > Repository permissions > "Secrets" > "Read and write".
-  - "Generate token" e copiar. Também não cola no chat.
-- Voltar ao formulário de secret. Name: `GH_PAT`. Secret: colar. "Add secret".
-- Pergunte a data de validade que ela escolheu e peça para pôr um lembrete na agenda uma semana antes, com o texto "trocar o GH_PAT do Instagram". Anote a data em `instalacao.md`.
-
-**3.3 IG_USER_ID**
-- É o número da conta do Instagram. Não é segredo, mas fica no cofre junto com os outros.
-- Para descobrir sem expor o token: rode o teste do Passo 4 agora. Ele vai falhar de propósito e mostrar a mensagem "Falta o secret IG_USER_ID. O valor certo, sem os espaços, é: ...". O número vem com espaços entre os dígitos; tire os espaços.
-- Com o número em mãos, abrir o formulário de novo. Name: `IG_USER_ID`. Secret: o número, só dígitos. "Add secret".
-
-Confere: com `gh`, `gh secret list` mostra os três nomes. Sem `gh`, a pessoa abre https://github.com/DONO/REPO/settings/secrets/actions e confirma que vê `GH_PAT`, `IG_ACCESS_TOKEN` e `IG_USER_ID`.
+**3.2 GH_PAT.** É a chave do GitHub que deixa o repositório renovar o token do Instagram todo mês.
+1. Abra o formulário já preenchido:
+   `https://github.com/settings/personal-access-tokens/new?name=renovar-instagram&description=Renova+o+token+do+Instagram&target_name=DONO&expires_in=365&secrets=write`
+2. Confira e complete na tela: "Repository access" em "Only select repositories" com só o REPO marcado; em permissões de repositório, "Secrets" como "Read and write"; validade a maior que a tela aceitar. Se o link não preencher, preencha à mão.
+3. Em outra aba, abra o formulário de secret e preencha só o Name com `GH_PAT`.
+4. **Parada do token.** Diga exatamente: "Agora é com você: na aba do token, clique em 'Generate token' (o GitHub pode pedir sua senha) e copie. Na outra aba, cole no campo Secret e clique em 'Add secret'. Feche a aba do token e me diga 'pronto'." Não olhe o navegador até o "pronto".
+5. Confere: `gh secret list` mostra `GH_PAT`, `IG_ACCESS_TOKEN` e `IG_USER_ID`.
+6. Anote a data de validade no `instalacao.md`.
 
 ---
 
-## Passo 4. Prova
+## Passo 4. Prova (você faz sozinho)
 
-**4.1 Testar a conexão**
-- Com `gh`: `gh workflow run testar-conexao.yml`, depois `gh run watch` e `gh run view --log` (isso você faz).
-- Sem `gh`: a pessoa abre https://github.com/DONO/REPO/actions/workflows/testar-conexao.yml > "Run workflow" > "Run workflow", espera cerca de um minuto, abre a execução e lê o resumo para você.
-- Se a aba Actions mostrar um aviso pedindo para habilitar os workflows, ela clica em habilitar e roda de novo.
-- Resultado esperado: **"Conexão OK"** com o @ dela.
-- Se falhar, a mensagem diz o que é:
-  - "Falta o secret ..." ou "não bate com o token": voltar ao Passo 3.
-  - "Token inválido": o token foi copiado pela metade ou é de outro app. Refazer 2.5 e 3.1.
-  - "não tem a permissão de publicar": voltar ao 2.2, adicionar `instagram_business_content_publish` e gerar o token de novo.
+**4.1 Conexão.** Rode `testar-conexao.yml` de novo. Esperado: **"Conexão OK"** com o @ dela.
+- "não bate com o token": refaça o 3.1.
+- "não tem a permissão de publicar": volte ao item 4 do Passo 2, adicione `instagram_business_content_publish` e repita os itens 7 a 10.
+- Aviso para habilitar workflows na aba Actions: habilite e rode de novo.
 
-**4.2 Testar a renovação**
-- Rode a Action "Renovar token do Instagram" do mesmo jeito (`gh workflow run renovar-token.yml`, ou o botão Run workflow na página dela).
-- Esperado: "Token renovado". Depois rode o 4.1 mais uma vez para confirmar que o token novo funciona.
-- Se a mensagem for "A Meta recusou a renovação" e o token acabou de ser criado, não é defeito: anote em `instalacao.md` para repetir este teste amanhã e siga.
-- Se a mensagem for sobre o `GH_PAT`: refazer o 3.2. Esse é o erro que só apareceria daqui a um mês, por isso o teste é agora.
+**4.2 Renovação.** Rode `renovar-token.yml`. Esperado: "Token renovado". Depois rode o 4.1 mais uma vez.
+- "A Meta recusou a renovação" com token recém-criado não é defeito: anote no `instalacao.md` para repetir amanhã e siga.
+- Mensagem sobre o `GH_PAT`: refaça o 3.2. Esse erro só apareceria daqui a um mês, por isso o teste é agora.
 
-**Só declare a instalação concluída quando o 4.1 mostrar "Conexão OK".** Sem isso, diga com clareza que não terminou e qual é o passo pendente.
+**Só declare a instalação concluída com "Conexão OK" no 4.1.** Sem isso, diga com clareza que não terminou e qual é o ponto pendente.
 
 ---
 
 ## Encerramento
 
-Quando concluir:
-1. Atualize `instalacao.md` com a data, os passos concluídos, a validade do `GH_PAT` e qualquer pendência (por exemplo, repetir o 4.2).
-2. Faça commit e push do que mudou (`CLAUDE.md`, `design/`, `instalacao.md`). Antes do commit, confira que nenhum arquivo contém token.
-3. Diga à pessoa, em poucas linhas:
-   - como pedir o primeiro post ("faz um post sobre ...") e que nada sai sem ela dizer "publica";
-   - os dois vencimentos do README: a troca do `GH_PAT` na data anotada, e que o GitHub desliga os agendamentos depois de 60 dias sem nenhum post ou commit;
-   - que, se algo parar, é só pedir "testa a conexão".
-4. Ofereça fazer o primeiro post de verdade agora.
+1. Atualize o `instalacao.md` e faça commit e push. Antes, confira que nenhum arquivo contém token.
+2. Diga à pessoa, em quatro linhas:
+   - está instalado, e o teste deu "Conexão OK";
+   - para postar: "faz um post sobre ...", e nada sai sem ela dizer "publica";
+   - duas datas para a agenda: a validade do `GH_PAT` (diga a data), e que o GitHub desliga tudo depois de 60 dias sem post. Detalhes em `docs/manutencao.md`;
+   - se algo parar: "testa a conexão".
+3. Ofereça fazer o primeiro post de verdade agora.
 
-A etapa 3 (acompanhar resultados) é opcional e ainda não existe. Só mencione se a pessoa perguntar: a proposta está em `docs/etapa-3-acompanhamento.md`.
+A etapa 3 (acompanhar resultados) é opcional e ainda não existe. Só mencione se ela perguntar: a proposta está em `docs/etapa-3-acompanhamento.md`.

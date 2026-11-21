@@ -2,7 +2,7 @@
 
 Este repositório publica no Instagram do dono dele. Publicar é público e não tem volta.
 
-Se a Parte 2 ainda tiver campos com `PREENCHER`, a instalação não terminou: avise a pessoa e sugira rodar `/instalar` antes de criar qualquer post.
+Se a Parte 2 ainda tiver campos com `PREENCHER`, a instalação não terminou: avise a pessoa e continue pelo roteiro `.claude/commands/instalar.md` (ou `/instalar`) antes de criar qualquer post.
 
 ---
 
@@ -16,7 +16,7 @@ Se a Parte 2 ainda tiver campos com `PREENCHER`, a instalação não terminou: a
 
 ### Como um post nasce e sai
 
-1. Monte a arte seguindo a Parte 2 e trabalhe na pasta `rascunhos/` (ela não vai para o GitHub). Abra o PNG gerado e confira com os próprios olhos antes de mostrar.
+1. Monte a arte seguindo a Parte 2, a partir de `design/base-post.html`, e trabalhe na pasta `rascunhos/` (ela não vai para o GitHub). Abra o PNG gerado e confira com os próprios olhos antes de mostrar.
 2. Mostre os PNGs e a legenda no chat. Ajuste até a pessoa aprovar.
 3. Depois do "publica":
    - imagens: `python scripts/preparar_post.py <slug> legenda.txt img1.png img2.png ...` (precisa do Pillow: `pip install pillow`). O script converte para JPEG 1080x1350 e cria `posts/<data>-<slug>/post.json` como `rascunho`.
@@ -44,66 +44,52 @@ Post agendado depende do relógio do GitHub, que pode atrasar de minutos a algum
 ### Quando algo parar de funcionar
 
 - Rode a Action "Testar conexão com o Instagram". Ela diz se o problema é o token.
-- Token vencido: gerar outro no painel da Meta e trocar o secret `IG_ACCESS_TOKEN` (Passo 2 e Passo 3 do `/instalar`).
+- Token vencido: gerar outro no painel da Meta e trocar o secret `IG_ACCESS_TOKEN` (Passo 2 do roteiro de instalação).
 - "Renovar token do Instagram" falhando: quase sempre é o `GH_PAT` vencido. Criar outro e trocar o secret.
 - Nada roda há semanas: o GitHub desliga os agendamentos de repositório público depois de 60 dias sem commit. Reative na aba Actions.
 
 ---
 
-## Parte 2. Design system (preenchido no /instalar)
+## Parte 2. Design system
 
-> Enquanto houver `PREENCHER` abaixo, o design system está incompleto.
+> Os campos com `PREENCHER` são preenchidos na instalação, a partir de três respostas da pessoa. O que está marcado como "sugerido" é ponto de partida: mude quando ela pedir.
 
 ### Perfil
 - Handle: PREENCHER
-- Sobre o que é o perfil, em uma frase: PREENCHER
-- Para quem fala: PREENCHER
-- Idioma: PREENCHER
+- Assunto e público, em uma frase: PREENCHER
+- Post de referência (o que ele tem de bom, em uma linha): PREENCHER
 
-### Cores
-- Fundo principal: PREENCHER (código hexadecimal)
-- Texto principal: PREENCHER
-- Cor de destaque: PREENCHER
-- Cor secundária (opcional): PREENCHER
-- Quando usar cada uma: PREENCHER
+### Cores (sugerido a partir da referência)
+- Fundo: PREENCHER
+- Texto: PREENCHER
+- Destaque: PREENCHER
 
-### Fontes
-- Títulos: PREENCHER (nome da fonte e peso)
+### Fontes (sugerido, do Google Fonts)
+- Títulos: PREENCHER
 - Texto corrido: PREENCHER
-- De onde vêm (Google Fonts ou arquivo em `design/fontes/`): PREENCHER
 
-### Tom de voz
-- Como o perfil fala: PREENCHER
-- Três frases de exemplo no tom certo: PREENCHER
-- Emoji: PREENCHER (usa, usa pouco, não usa)
-- Chamada final de costume: PREENCHER
+### Tom de voz (sugerido a partir do assunto)
+- Como o perfil fala, com uma frase de exemplo: PREENCHER
 
 ### Formatos
-Tamanho padrão: 1080 x 1350 pixels.
+Tamanho: 1080 x 1350 pixels. Base: `design/base-post.html` (as cores e fontes ficam nas variáveis do começo do arquivo).
 
-**Post único**
-- Estrutura (o que vai no topo, no meio e no rodapé): PREENCHER
-- Tamanho do título e limite de palavras na arte: PREENCHER
-- Arquivo base: PREENCHER (por exemplo `design/base-post.html`)
-
-**Carrossel**
-- Quantidade de telas de costume e máximo: PREENCHER
-- Capa: PREENCHER
-- Telas do meio: PREENCHER
-- Última tela: PREENCHER
-- Arquivo base: PREENCHER (por exemplo `design/base-carrossel.html`)
+- **Post único:** assunto em uma etiqueta, título de até 8 palavras com uma palavra em destaque, uma frase de apoio. O detalhe vai na legenda.
+- **Carrossel:** até 6 telas. Capa na cor de destaque, telas do meio no fundo padrão com contador (1 / 5), última tela com a chamada. Um arquivo por tela, usando as classes `capa` e `final` da base.
 
 ### Assinatura
-- O que aparece em toda arte (handle, site, logo): PREENCHER
-- Logo: PREENCHER (caminho do arquivo em `design/`, ou "não tem")
+- Handle no topo e no rodapé de toda arte. Logo: não tem (se a pessoa mandar um, salve em `design/` e anote aqui).
 
 ### Legenda
-- Tamanho de costume: PREENCHER
-- Hashtags fixas: PREENCHER
+- De 3 a 6 linhas curtas, uma chamada no fim e até 5 hashtags do assunto.
 
 ### O que nunca escrever
-- PREENCHER (palavras, promessas, assuntos e sinais de pontuação proibidos)
+- Promessa de resultado garantido, número ou dado sem fonte, nome ou imagem de terceiros sem autorização.
+- Acrescente aqui o que a pessoa pedir para nunca aparecer.
 
 ### Como gerar a arte
-- Método que funcionou neste computador: PREENCHER (por exemplo: HTML renderizado em PNG pelo Chrome sem janela)
-- Comando de render: PREENCHER
+- Copie `design/base-post.html` para `rascunhos/<slug>/`, mude os textos e renderize em PNG com o Chrome sem janela:
+  - Mac: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --hide-scrollbars --window-size=1080,1350 --screenshot=saida.png arquivo.html`
+  - Windows: o mesmo comando com o caminho do `chrome.exe`. Linux: `google-chrome`.
+- Sem Chrome no computador: desenhe com Pillow, nas mesmas cores e proporções.
+- Sempre abra o PNG e confira antes de mostrar: texto cortado, fonte errada e margem torta são os erros comuns.
